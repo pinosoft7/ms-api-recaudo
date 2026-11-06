@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Consola" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5p [%t] %c{1} %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Logger name="co.datacenter" level="info"/>
+    <Root level="info">
+      <AppenderRef ref="Consola"/>
+    </Root>
+  </Loggers>
+</Configuration>

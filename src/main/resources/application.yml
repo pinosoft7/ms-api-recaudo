@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: ms-api-recaudo
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XEPDB1
+    username: recaudo
+    password: ${ORACLE_PASSWORD:changeit}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate.dialect: org.hibernate.dialect.OracleDialect
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 200ms
+
+server:
+  port: 8082
+
+validacion:
+  base-url: http://localhost:8081
+
+pasarela:
+  base-url: http://localhost:9090
+  firma-secreto: ${PASARELA_FIRMA:secreto-de-firma}
+  cripto-clave: ${PASARELA_CRIPTO:clave-de-redirect}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      pasarela:
+        sliding-window-type: count_based
+        sliding-window-size: 20
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        record-exceptions:
+          - co.datacenter.recaudo.client.PasarelaInciertoException
+  retry:
+    instances:
+      pasarelaConsulta:
+        max-attempts: 3
+        wait-duration: 1s
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        exponential-max-wait-duration: 4s
+        randomization-factor: 0.5
+        retry-exceptions:
+          - co.datacenter.recaudo.client.PasarelaInciertoException
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
